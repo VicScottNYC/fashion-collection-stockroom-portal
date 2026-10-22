@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -6,12 +6,51 @@ import StatCard from "./components/StatCard";
 import CollectionCard from "./components/CollectionCard";
 import InventoryTable from "./components/InventoryTable";
 
-import { products, collections } from "./data/mockData";
+import { collections } from "./data/mockData";
+import { fetchProducts } from "./services/api";
+import type { Product } from "./types/inventory";
 
 import "./App.css";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Dashboard");
+
+  // Product data now comes from FastAPI.
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      try {
+        const data = await fetchProducts();
+
+        if (!cancelled) {
+          setProducts(data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Unable to load inventory."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const totalUnits = products.reduce(
     (sum, product) => sum + product.quantity,
@@ -47,12 +86,12 @@ export default function App() {
               <StatCard
                 label="PRODUCT STYLES"
                 value={products.length}
-                detail="Sample catalog"
+                detail="API product catalog"
               />
               <StatCard
                 label="INVENTORY UNITS"
                 value={totalUnits}
-                detail="Across sample products"
+                detail="Across API products"
               />
               <StatCard
                 label="STOCK ALERTS"
@@ -89,11 +128,19 @@ export default function App() {
                   <h2>Inventory Overview</h2>
                 </div>
                 <span className="section-meta">
-                  Sample inventory
+                  Live API inventory
                 </span>
               </div>
 
-              <InventoryTable products={products} />
+              {loading ? (
+                <p role="status">Loading inventory...</p>
+              ) : error ? (
+                <p role="alert">
+                  Unable to load inventory: {error}
+                </p>
+              ) : (
+                <InventoryTable products={products} />
+              )}
             </section>
           </>
         ) : (
