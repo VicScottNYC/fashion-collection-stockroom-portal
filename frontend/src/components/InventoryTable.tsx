@@ -1,11 +1,15 @@
 import type { Product } from "../types/inventory";
 
-interface InventoryTableProps {
+type InventoryTableProps = {
   products: Product[];
-}
+  onEdit: (product: Product) => void;
+  onDelete: (product: Product) => void;
+};
 
 export default function InventoryTable({
   products,
+  onEdit,
+  onDelete,
 }: InventoryTableProps) {
   return (
     <div className="table-scroll">
@@ -17,6 +21,7 @@ export default function InventoryTable({
             <th>Category</th>
             <th>Quantity</th>
             <th>Status</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
 
@@ -35,6 +40,24 @@ export default function InventoryTable({
                 >
                   {product.status}
                 </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  className="inventory-edit-button"
+                  onClick={() => onEdit(product)}
+                  aria-label={`Edit ${product.name}`}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="inventory-delete-button"
+                  onClick={() => onDelete(product)}
+                  aria-label={`Delete ${product.name}`}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

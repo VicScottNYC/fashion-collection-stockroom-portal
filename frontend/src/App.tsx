@@ -11,9 +11,22 @@ import { fetchProducts } from "./services/api";
 import type { Product } from "./types/inventory";
 
 import "./App.css";
+import AddProductForm from "./components/AddProductForm";
+import EditProductForm from "./components/EditProductForm";
+import { deleteProduct } from "./services/api";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Dashboard");
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  async function refreshProducts() {
+  const latestProducts = await fetchProducts();
+  setProducts(latestProducts);
+}
 
   // Product data now comes from FastAPI.
   const [products, setProducts] = useState<Product[]>([]);
@@ -100,6 +113,8 @@ export default function App() {
               />
             </section>
 
+
+
             <section className="content-section">
               <div className="section-heading">
                 <div>
@@ -122,26 +137,133 @@ export default function App() {
             </section>
 
             <section className="content-section">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">STOCKROOM OPERATIONS</p>
-                  <h2>Inventory Overview</h2>
-                </div>
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">STOCKROOM OPERATIONS</p>
+                <h2>Inventory Overview</h2>
+              </div>
+
+              <div className="inventory-actions">
                 <span className="section-meta">
                   Live API inventory
                 </span>
-              </div>
 
-              {loading ? (
-                <p role="status">Loading inventory...</p>
-              ) : error ? (
-                <p role="alert">
-                  Unable to load inventory: {error}
-                </p>
-              ) : (
-                <InventoryTable products={products} />
+                <button
+                   type="button"
+                    onClick={() => {
+                      setEditingProduct(null);
+                      setShowAddProduct(true);
+                    }}
+                  >
+                    + Add Product
+                </button>
+              </div>
+            </div>
+
+            {showAddProduct && (
+              <AddProductForm
+                onCreated={async () => {
+                  await refreshProducts();
+                  setShowAddProduct(false);
+                }}
+                onCancel={() => setShowAddProduct(false)}
+              />
+            )}
+
+            {editingProduct && (
+              <EditProductForm
+                key={editingProduct.id}
+                product={editingProduct}
+                onUpdated={async () => {
+                  await refreshProducts();
+                  setEditingProduct(null);
+                }}
+                onCancel={() => setEditingProduct(null)}
+              />
+            )}
+
+            {loading ? (
+              <p role="status">Loading inventory...</p>
+            ) : error ? (
+              <p role="alert">
+                Unable to load inventory: {error}
+              </p>
+            ) : (
+              <>
+              <InventoryTable
+                products={products}
+                onEdit={(product) => {
+                  setShowAddProduct(false);
+                  setEditingProduct(product);
+                }}
+                 onDelete={(product) => {
+                  setDeleteError(null);
+                  setDeletingProduct(product);
+                }}
+              />
+
+              {deletingProduct && (
+                <div
+                  className="delete-confirmation"
+                  role="alertdialog"
+                  aria-modal="true"
+                  aria-labelledby="delete-confirmation-title"
+                  aria-describedby="delete-confirmation-description"
+                >
+                  <h3 id="delete-confirmation-title">Delete Product?</h3>
+
+                  <p id="delete-confirmation-description">
+                    Are you sure you want to permanently delete{" "}
+                    <strong>{deletingProduct.name}</strong> (
+                    {deletingProduct.sku})?
+                  </p>
+
+                  {deleteError && <p role="alert">{deleteError}</p>}
+
+                  <div className="product-form-actions">
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => {
+                        setDeletingProduct(null);
+                        setDeleteError(null);
+                      }}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={async () => {
+                        if (!deletingProduct || isDeleting) return;
+
+                        setIsDeleting(true);
+                        setDeleteError(null);
+
+                        try {
+                          await deleteProduct(deletingProduct.id);
+                          await refreshProducts();
+                          setDeletingProduct(null);
+                        } catch (error) {
+                          setDeleteError(
+                            error instanceof Error
+                              ? error.message
+                              : "Unable to delete product."
+                          );
+                        } finally {
+                          setIsDeleting(false);
+                        }
+                      }}
+                    >
+                      {isDeleting ? "Deleting..." : "Confirm Delete"}
+                    </button>
+                  </div>
+                </div>
               )}
-            </section>
+              </>
+            )}
+          </section>
           </>
         ) : (
           <section className="placeholder-page">
