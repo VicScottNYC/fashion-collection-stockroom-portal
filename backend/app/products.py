@@ -1,12 +1,13 @@
 import logging
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.database import engine
+from app.rbac import AppRole, require_roles
 
 class ProductCreate(BaseModel):
     sku: str = Field(min_length=1, max_length=50)
@@ -33,6 +34,7 @@ class Product(BaseModel):
     collection: str
     quantity: int = Field(ge=0)
     status: Literal["In Stock", "Low Stock", "Out of Stock"]
+    image_path: str | None = None
 
 class ProductUpdate(BaseModel):
     sku: str | None = Field(default=None, min_length=1, max_length=50)
@@ -43,7 +45,19 @@ class ProductUpdate(BaseModel):
     status: Literal["In Stock", "Low Stock", "Out of Stock"] | None = None
 
 
-@router.get("", response_model=list[Product])
+@router.get(
+    "",
+    response_model=list[Product],
+    dependencies=[
+        Depends(
+            require_roles(
+                AppRole.ADMINISTRATOR,
+                AppRole.INVENTORY_MANAGER,
+                AppRole.VIEWER,
+            )
+        )
+    ],
+)
 def get_products():
     try:
         with engine.connect() as connection:
@@ -56,7 +70,8 @@ def get_products():
                         category,
                         collection,
                         quantity,
-                        status
+                        status,
+                        image_path
                     FROM public.products
                     ORDER BY id
                 """)
@@ -78,6 +93,14 @@ def get_products():
     "",
     response_model=Product,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[
+        Depends(
+            require_roles(
+                AppRole.ADMINISTRATOR,
+                AppRole.INVENTORY_MANAGER,
+            )
+        )
+    ],
 )
 def create_product(product: ProductCreate):
     try:
@@ -131,7 +154,18 @@ def create_product(product: ProductCreate):
             detail="Unable to create product at this time.",
         )
 
-@router.patch("/{product_id}", response_model=Product)
+@router.patch(
+    "/{product_id}",
+    response_model=Product,
+    dependencies=[
+        Depends(
+            require_roles(
+                AppRole.ADMINISTRATOR,
+                AppRole.INVENTORY_MANAGER,
+            )
+        )
+    ],
+)
 def update_product(product_id: int, updates: ProductUpdate):
     # Only include fields supplied in the request.
     changes = updates.model_dump(exclude_unset=True)
@@ -205,6 +239,9 @@ def update_product(product_id: int, updates: ProductUpdate):
 @router.delete(
     "/{product_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        Depends(require_roles(AppRole.ADMINISTRATOR))
+    ],
 )
 def delete_product(product_id: int):
     with engine.begin() as connection:

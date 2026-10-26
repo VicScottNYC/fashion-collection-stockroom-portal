@@ -8,6 +8,10 @@ import InventoryTable from "./components/InventoryTable";
 
 import { collections } from "./data/mockData";
 import { fetchProducts } from "./services/api";
+import {
+  getCurrentUserRole,
+  type AppRole,
+} from "./services/roles";
 import type { Product } from "./types/inventory";
 
 import "./App.css";
@@ -17,8 +21,46 @@ import { deleteProduct } from "./services/api";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Dashboard");
+  const [role, setRole] = useState<AppRole | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadRole() {
+      try {
+        const currentRole = await getCurrentUserRole();
+
+        if (active) {
+          setRole(currentRole);
+          setRoleError(null);
+        }
+      } catch {
+        if (active) {
+          setRole(null);
+          setRoleError("Unable to verify your permissions.");
+        }
+      }
+    }
+
+    void loadRole();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const canManageProducts =
+    role === "administrator" ||
+    role === "inventory_manager";
+
+  const canDeleteProducts = role === "administrator";
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [collectionFilter, setCollectionFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -78,6 +120,33 @@ export default function App() {
     (product) => product.status === "Out of Stock"
   ).length;
 
+  const collectionOptions = [...new Set(products.map((product) => product.collection))].sort();
+    const categoryOptions = [...new Set(products.map((product) => product.category))].sort();
+
+    const filteredProducts = products.filter((product) => {
+      const query = searchQuery.trim().toLowerCase();
+
+      const matchesSearch =
+        product.name.toLowerCase().includes(query) ||
+        product.sku.toLowerCase().includes(query);
+
+      const matchesCollection =
+        collectionFilter === "All" || product.collection === collectionFilter;
+
+      const matchesCategory =
+        categoryFilter === "All" || product.category === categoryFilter;
+
+      const matchesStatus =
+        statusFilter === "All" || product.status === statusFilter;
+
+      return (
+        matchesSearch &&
+        matchesCollection &&
+        matchesCategory &&
+        matchesStatus
+      );
+    });
+
   return (
     <div className="app-shell">
       <Sidebar
@@ -86,7 +155,7 @@ export default function App() {
       />
 
       <main className="main-content">
-        <Header title={activePage} />
+        <Header title={activePage} role={role} />
 
         {activePage === "Dashboard" ? (
           <>
@@ -112,8 +181,6 @@ export default function App() {
                 detail="Require attention"
               />
             </section>
-
-
 
             <section className="content-section">
               <div className="section-heading">
@@ -143,24 +210,75 @@ export default function App() {
                 <h2>Inventory Overview</h2>
               </div>
 
+              <div className="inventory-search">
+                <input
+                  type="search"
+                  placeholder="Search products or SKU..."
+                  aria-label="Search inventory by product name or SKU"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
+              </div>
+
+              <div className="inventory-filters">
+                <select
+                  aria-label="Filter by collection"
+                  value={collectionFilter}
+                  onChange={(event) => setCollectionFilter(event.target.value)}
+                >
+                  <option value="All">All Collections</option>
+                  {collectionOptions.map((collection) => (
+                    <option key={collection} value={collection}>
+                      {collection}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  aria-label="Filter by category"
+                  value={categoryFilter}
+                  onChange={(event) => setCategoryFilter(event.target.value)}
+                >
+                  <option value="All">All Categories</option>
+                  {categoryOptions.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  aria-label="Filter by stock status"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                >
+                  <option value="All">All Stock Statuses</option>
+                  <option value="In Stock">In Stock</option>
+                  <option value="Low Stock">Low Stock</option>
+                  <option value="Out of Stock">Out of Stock</option>
+                </select>
+              </div>
+
               <div className="inventory-actions">
                 <span className="section-meta">
                   Live API inventory
                 </span>
 
-                <button
-                   type="button"
+                {canManageProducts && (
+                  <button
+                    type="button"
                     onClick={() => {
                       setEditingProduct(null);
                       setShowAddProduct(true);
                     }}
                   >
                     + Add Product
-                </button>
+                  </button>
+                )}
               </div>
             </div>
 
-            {showAddProduct && (
+            {canManageProducts && showAddProduct && (
               <AddProductForm
                 onCreated={async () => {
                   await refreshProducts();
@@ -170,7 +288,7 @@ export default function App() {
               />
             )}
 
-            {editingProduct && (
+            {canManageProducts && editingProduct && (
               <EditProductForm
                 key={editingProduct.id}
                 product={editingProduct}
@@ -181,6 +299,10 @@ export default function App() {
                 onCancel={() => setEditingProduct(null)}
               />
             )}
+            {roleError && (
+              <p role="alert">{roleError}</p>
+            )}
+
 
             {loading ? (
               <p role="status">Loading inventory...</p>
@@ -191,7 +313,8 @@ export default function App() {
             ) : (
               <>
               <InventoryTable
-                products={products}
+                products={filteredProducts}
+                role={role}
                 onEdit={(product) => {
                   setShowAddProduct(false);
                   setEditingProduct(product);
@@ -202,7 +325,7 @@ export default function App() {
                 }}
               />
 
-              {deletingProduct && (
+              {canDeleteProducts && deletingProduct && (
                 <div
                   className="delete-confirmation"
                   role="alertdialog"

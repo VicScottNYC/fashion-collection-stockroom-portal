@@ -584,3 +584,102 @@ h2 {
 .delete-confirmation p {
   color: #d7ccc0;
 }
+
+.inventory-search {
+  margin: 12px 0;
+  min-width: 220px;
+}
+
+.inventory-search input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #625a4c;
+  border-radius: 6px;
+  background: #211d1b;
+  color: #f2ece3;
+  font: inherit;
+  font-size: 14px;
+}
+
+.inventory-search input::placeholder {
+  color: #a99e90;
+}
+
+.inventory-search input:focus {
+  outline: 2px solid #c8a96b;
+  outline-offset: 2px;
+}
+
+.inventory-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.inventory-filters select {
+  flex: 1 1 180px;
+  min-width: 160px;
+  padding: 11px 14px;
+  border: 1px solid #625a4c;
+  border-radius: 6px;
+  background: #211d1b;
+  color: #f2ece3;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.inventory-filters select:focus-visible {
+  outline: 2px solid #c8a96b;
+  outline-offset: 2px;
+}
+
+.product-image,
+.product-image-placeholder {
+  width: 52px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
+}
+
+.product-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #29251f;
+  border: 1px solid #625a4c;
+  color: #c8a96b;
+  font-size: 26px;
+}
+
+/* Header logout button */
+
+.header-signout {
+  background: transparent;
+  border: 1px solid #c5a46d;
+  color: #c5a46d;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.header-signout:hover:not(:disabled) {
+  background: #c5a46d;
+  color: #151515;
+}
+
+.header-signout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.header-signout:focus-visible {
+  outline: 2px solid #c5a46d;
+  outline-offset: 3px;
+}

@@ -1,0 +1,13 @@
+.atelier-login-footer {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #807a70;
+}
+
+@media (max-width: 480px) {
+  .atelier-login-card {
+    padding: 36px 24px;
+  }
+}

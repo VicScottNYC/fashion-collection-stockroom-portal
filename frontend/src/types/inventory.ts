@@ -6,6 +6,7 @@ export interface Product {
   collection: string;
   quantity: number;
   status: "In Stock" | "Low Stock" | "Out of Stock";
+  image_path: string | null;
 }
 
 export interface Collection {

@@ -9,6 +9,7 @@ export const products: Product[] = [
     collection: "Fall / Winter 2026",
     quantity: 48,
     status: "In Stock",
+    image_path: null,
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ export const products: Product[] = [
     collection: "Fall / Winter 2026",
     quantity: 8,
     status: "Low Stock",
+    image_path: null,
   },
   {
     id: 3,
@@ -27,6 +29,7 @@ export const products: Product[] = [
     collection: "Spring / Summer 2027",
     quantity: 0,
     status: "Out of Stock",
+    image_path: null,
   },
   {
     id: 4,
@@ -36,6 +39,7 @@ export const products: Product[] = [
     collection: "Fall / Winter 2026",
     quantity: 120,
     status: "In Stock",
+    image_path: null,
   },
 ];
 
