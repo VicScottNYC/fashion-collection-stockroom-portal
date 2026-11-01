@@ -28,3 +28,16 @@ Expo-Go-58.0.5.tar.app/
 
 # Microsoft Office temporary files
 ~$*
+
+# Local development backups
+*.bak
+*.pre_certifi_fix.bak
+*.pre_restricted_activation
+*.pre_runtime_backup
+*.pre_runtime_only.bak
+# Local diagnostic artifacts
+backend/requirements-installed.txt
+backend/diagnose_jwt.py
+# Personal reference documents
+/AV Support Scenarios.docx
+/Fashion Collection (Build Guide).docx

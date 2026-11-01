@@ -76,23 +76,27 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     let cancelled = false;
 
     async function loadProducts() {
       try {
-        const data = await fetchProducts();
+        const data = await fetchProducts(controller.signal);
 
         if (!cancelled) {
           setProducts(data);
+          setError(null);
         }
       } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Unable to load inventory."
-          );
+        if (cancelled || controller.signal.aborted) {
+          return;
         }
+
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to load inventory."
+        );
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -104,6 +108,7 @@ export default function App() {
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, []);
 

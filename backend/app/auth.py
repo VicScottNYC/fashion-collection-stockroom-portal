@@ -1,4 +1,6 @@
 import os
+import ssl
+import certifi
 from functools import lru_cache
 from pathlib import Path
 from uuid import UUID
@@ -27,11 +29,15 @@ class AuthenticatedUser(BaseModel):
 
 @lru_cache(maxsize=1)
 def get_jwks_client() -> PyJWKClient:
+    ssl_context = ssl.create_default_context(
+        cafile=certifi.where()
+    )
     return PyJWKClient(
         JWKS_URL,
         cache_jwk_set=True,
         lifespan=300,
         timeout=5,
+        ssl_context=ssl_context,
     )
 
 

@@ -10,16 +10,18 @@ env_path = Path(__file__).resolve().parent.parent / ".env"
 # Load database configuration
 load_dotenv(env_path)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+RUNTIME_DATABASE_URL = os.getenv("RUNTIME_DATABASE_URL")
 
-if not DATABASE_URL:
+if not RUNTIME_DATABASE_URL:
     raise RuntimeError(
-        "DATABASE_URL is missing. Check backend/.env."
+        "RUNTIME_DATABASE_URL is missing. Check backend/.env."
     )
 
 # Create the PostgreSQL connection engine
+ACTIVE_DATABASE_URL = RUNTIME_DATABASE_URL
+
 engine = create_engine(
-    DATABASE_URL,
+    ACTIVE_DATABASE_URL,
     pool_pre_ping=True,
     connect_args={"connect_timeout": 10},
 )

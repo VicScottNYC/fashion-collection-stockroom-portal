@@ -58,8 +58,12 @@ async function handleResponse(response: Response): Promise<Product> {
 }
 
 // GET: All authenticated roles.
-export async function fetchProducts(): Promise<Product[]> {
-  const response = await authenticatedFetch("/api/products");
+export async function fetchProducts(
+  signal?: AbortSignal
+): Promise<Product[]> {
+  const response = await authenticatedFetch("/api/products", {
+    signal,
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
