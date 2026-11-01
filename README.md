@@ -194,6 +194,32 @@ Completed implementation visible in the current source includes the authenticate
 
 Documentation-only reconciliation against the current application, dependency manifests and migration 009. Updates cover Sprint 6.4, image upload behavior and limits, runtime connection setup, role privileges and remaining frontend/testing/deployment gaps. Application code, database state and migration files are outside this sprint's changes.
 
+## Application Screenshots
+
+### Dashboard Overview
+
+Administrator dashboard displaying inventory metrics, seasonal collection cards, and application navigation. Seasonal collection cards use demonstration data.
+
+![ATELIER Dashboard Overview](docs/screenshots/dashboard-overview.png)
+
+### Inventory Management
+
+Live API inventory showing product images, SKU tracking, quantities, stock indicators, search, filters, and administrator management controls.
+
+![ATELIER Inventory Management](docs/screenshots/inventory-management.png)
+
+### Product Management
+
+Administrator product editing interface displaying inventory fields and the existing product catalog.
+
+![ATELIER Product Management](docs/screenshots/product-management.png)
+
+### Role-Based Access — Viewer
+
+Read-only inventory interface demonstrating that viewer accounts can browse inventory without product creation, editing, or deletion controls.
+
+![ATELIER Viewer Role](docs/screenshots/viewer-read-only.png)
+
 ## Design philosophy
 
 Fashion + Enterprise Hybrid: elegant fashion-inspired interfaces paired with practical inventory management workflows.
