@@ -2,6 +2,8 @@
 
 ATELIER is a full-stack fashion inventory portal combining premium editorial design with practical stockroom operations. Its current dashboard supports authenticated product management, SKU tracking, stock visibility, and role-based access through React, FastAPI, and Supabase.
 
+[Download the ATELIER portfolio brochure (PDF)](docs/ATELIER-Portfolio-Brochure.pdf)
+
 ## Development status and roadmap
 
 Sprints 1–4 and Sprint 6.4 are completed development milestones. Sprint 6.5.1A updates this README to match the current source. The summaries below reflect deliverables visible in the repository; they do not imply that every item in the original build guide has shipped. Sprint 5 remains planned; later scope is TBD except for the milestones documented below.
