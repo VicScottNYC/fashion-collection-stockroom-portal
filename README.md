@@ -1,39 +1,49 @@
-# ATELIER — Fashion Collection & Stockroom Portal
+<div align="center">
+
+# ATELIER
+
+### Fashion Collection & Stockroom Portal
 
 ATELIER is a full-stack fashion inventory portal combining premium editorial design with practical stockroom operations. Its current dashboard supports authenticated product management, SKU tracking, stock visibility, and role-based access through React, FastAPI, and Supabase.
 
-[Download the ATELIER portfolio brochure (PDF)](docs/ATELIER-Portfolio-Brochure.pdf)
+**[Download the ATELIER portfolio brochure (PDF)](https://github.com/VicScottNYC/fashion-collection-stockroom-portal/raw/main/docs/ATELIER-Portfolio-Brochure.pdf)**
 
-## Development status and roadmap
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-psycopg-D71F00?logo=sqlalchemy&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?logo=postgresql&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Auth%20%C2%B7%20Storage-3FCF8E?logo=supabase&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-ES256%20%C2%B7%20JWKS-000000?logo=jsonwebtokens&logoColor=white)
+![RBAC](https://img.shields.io/badge/access-role--based-6250d6)
 
-Sprints 1–4 and Sprint 6.4 are completed development milestones. Sprint 6.5.1A updates this README to match the current source. The summaries below reflect deliverables visible in the repository; they do not imply that every item in the original build guide has shipped. Sprint 5 remains planned; later scope is TBD except for the milestones documented below.
+![ATELIER Dashboard Overview](docs/screenshots/dashboard-overview.png)
 
-| Sprint | Status | Verified deliverables or planned scope | Notes |
-| --- | --- | --- | --- |
-| 1 — Foundation | Completed | Project initialization, frontend scaffold, application structure and visual foundation | [Sprint 1](#sprint-1--foundation) |
-| 2 — Dashboard and API integration | Completed | Fashion dashboard, inventory table, FastAPI product API and frontend integration | [Sprint 2](#sprint-2--dashboard-and-api-integration) |
-| 3 — Database and inventory CRUD | Completed | Supabase PostgreSQL integration; create, read, edit and delete product workflows | [Sprint 3](#sprint-3--database-and-inventory-crud) |
-| 4 — Authentication and access control | Completed | Supabase sign-in, token verification, role-based inventory access and product image display | [Sprint 4](#sprint-4--authentication-and-access-control) |
-| 5 — Testing and deployment | Planned | Automated tests, GitHub Actions, documentation and a hosted demonstration, as proposed in the build guide | [Sprint 5](#sprint-5--testing-and-deployment) |
-| 6.4 — Inventory and runtime hardening | Completed | Product image upload API, guarded image replacement, restricted runtime database connection and pinned backend requirements | [Sprint 6.4](#sprint-64--inventory-and-runtime-hardening) |
-| 6.5.1A — README reconciliation | Documentation | Source-checked setup, capabilities, dependencies and migration 009 notes | [Sprint 6.5.1A](#sprint-651a--readme-reconciliation) |
-| Future sprints | TBD | Scope, sequence and acceptance criteria to be defined | — |
+<sub>Administrator dashboard displaying inventory metrics, seasonal collection cards, and application navigation. Seasonal collection cards use demonstration data.</sub>
 
-## Technology stack
+</div>
 
-| Layer | Current implementation |
-| --- | --- |
-| Frontend | React 19, TypeScript 6, Vite 8, HTML and CSS |
-| Frontend tooling | ESLint, npm and a committed package lockfile |
-| API | Python, FastAPI, Pydantic and Uvicorn |
-| Data access | SQLAlchemy with psycopg; Supabase PostgreSQL |
-| Identity | Supabase Auth, Supabase JavaScript/Python clients and PyJWT with JWKS verification |
-| Images | Supabase Storage image URLs and upload API; Pillow validation |
-| Hosting | Microsoft Azure is the original intended cloud target; deployment configuration is not present in this checkout |
+---
 
-Versions are based on the dependency manifests. Backend dependencies are pinned in `backend/requirements.txt`, including PyJWT, cryptography, Supabase, Pillow and python-multipart; see [local setup](#local-setup).
+## Screenshots
 
-## Current features
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/inventory-management.png" alt="ATELIER Inventory Management"/></td>
+<td width="50%"><img src="docs/screenshots/product-management.png" alt="ATELIER Product Management"/></td>
+</tr>
+<tr>
+<td><b>Inventory Management</b>: live API inventory showing product images, SKU tracking, quantities, stock indicators, search, filters, and administrator management controls.</td>
+<td><b>Product Management</b>: administrator product editing interface displaying inventory fields and the existing product catalog.</td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/viewer-read-only.png" alt="ATELIER Viewer Role"/></td>
+<td valign="top"><b>Role-Based Access — Viewer</b>: read-only inventory interface demonstrating that viewer accounts can browse inventory without product creation, editing, or deletion controls.<br/><br/><b>Design philosophy</b>: Fashion + Enterprise Hybrid, elegant fashion-inspired interfaces paired with practical inventory management workflows.</td>
+</tr>
+</table>
+
+## Features
 
 - Email/password sign-in, persistent sessions and sign-out through Supabase Auth.
 - Dashboard metrics for product styles, inventory units and stock alerts. Seasonal collection cards and the collection count currently use local mock data.
@@ -50,6 +60,20 @@ Versions are based on the dependency manifests. Backend dependencies are pinned 
 | `viewer` | Yes | No | No |
 
 Dedicated collection management, stock transfers between locations, inventory audit trails and operational reporting are not implemented. Non-dashboard navigation currently shows coming-soon placeholders. The image upload API is implemented; the React interface currently displays images but has no upload control. Concurrent image changes return 409; failed associations attempt cleanup of the new upload, while successfully replaced images are retained for deferred cleanup review.
+
+## Technology stack
+
+| Layer | Current implementation |
+| --- | --- |
+| Frontend | React 19, TypeScript 6, Vite 8, HTML and CSS |
+| Frontend tooling | ESLint, npm and a committed package lockfile |
+| API | Python, FastAPI, Pydantic and Uvicorn |
+| Data access | SQLAlchemy with psycopg; Supabase PostgreSQL |
+| Identity | Supabase Auth, Supabase JavaScript/Python clients and PyJWT with JWKS verification |
+| Images | Supabase Storage image URLs and upload API; Pillow validation |
+| Hosting | Microsoft Azure is the original intended cloud target; deployment configuration is not present in this checkout |
+
+Versions are based on the dependency manifests. Backend dependencies are pinned in `backend/requirements.txt`, including PyJWT, cryptography, Supabase, Pillow and python-multipart; see [local setup](#local-setup).
 
 ## Architecture
 
@@ -166,62 +190,58 @@ The build script runs TypeScript checks and creates the Vite production bundle. 
 - Product image URLs are public. Do not store confidential assets in the public bucket. The upload endpoint checks format, size and dimensions and re-encodes images. Managed storage paths are unique to each product; cleanup checks for current database references before deletion, and successful replacements retain prior files for deferred review.
 - Production deployment still needs environment configuration, HTTPS and appropriate CORS origins, dependency review, security verification and deployment checks.
 
-## Sprint notes
+## Development status and roadmap
 
-### Sprint 1 — Foundation
+Sprints 1–4 and Sprint 6.4 are completed development milestones. Sprint 6.5.1A updates this README to match the current source. The summaries below reflect deliverables visible in the repository; they do not imply that every item in the original build guide has shipped. Sprint 5 remains planned; later scope is TBD except for the milestones documented below.
+
+| Sprint | Status | Verified deliverables or planned scope | Notes |
+| --- | --- | --- | --- |
+| 1 — Foundation | Completed | Project initialization, frontend scaffold, application structure and visual foundation | [Sprint 1](#sprint-1--foundation) |
+| 2 — Dashboard and API integration | Completed | Fashion dashboard, inventory table, FastAPI product API and frontend integration | [Sprint 2](#sprint-2--dashboard-and-api-integration) |
+| 3 — Database and inventory CRUD | Completed | Supabase PostgreSQL integration; create, read, edit and delete product workflows | [Sprint 3](#sprint-3--database-and-inventory-crud) |
+| 4 — Authentication and access control | Completed | Supabase sign-in, token verification, role-based inventory access and product image display | [Sprint 4](#sprint-4--authentication-and-access-control) |
+| 5 — Testing and deployment | Planned | Automated tests, GitHub Actions, documentation and a hosted demonstration, as proposed in the build guide | [Sprint 5](#sprint-5--testing-and-deployment) |
+| 6.4 — Inventory and runtime hardening | Completed | Product image upload API, guarded image replacement, restricted runtime database connection and pinned backend requirements | [Sprint 6.4](#sprint-64--inventory-and-runtime-hardening) |
+| 6.5.1A — README reconciliation | Documentation | Source-checked setup, capabilities, dependencies and migration 009 notes | [Sprint 6.5.1A](#sprint-651a--readme-reconciliation) |
+| Future sprints | TBD | Scope, sequence and acceptance criteria to be defined | — |
+
+<details>
+<summary><b>Sprint notes</b></summary>
+
+#### Sprint 1 — Foundation
 
 History: `f904004` initializes the project and README; `f601693` adds the React and TypeScript scaffold. The original architecture separates frontend, backend, database and documentation concerns.
 
-### Sprint 2 — Dashboard and API integration
+#### Sprint 2 — Dashboard and API integration
 
 History: `36e5e34` implements the fashion inventory dashboard; `bb3846e` connects FastAPI products to React. The dashboard establishes the editorial visual direction, reusable cards and inventory presentation. The build guide also contains a later “Sprint 2 — FastAPI Backend” section, so this summary follows the delivered code rather than assuming its initial roadmap labels remained fixed.
 
-### Sprint 3 — Database and inventory CRUD
+#### Sprint 3 — Database and inventory CRUD
 
 History: `4f9424b` integrates Supabase PostgreSQL; `6b55758` completes product CRUD through FastAPI and React. Inventory transactions beyond these product operations are not represented in the current code.
 
-### Sprint 4 — Authentication and access control
+#### Sprint 4 — Authentication and access control
 
 History: `def595f` adds Supabase authentication and role-based inventory access, together with product image display and image/storage helpers. The original build guide's Enterprise Workflows scope also mentions stock transfers and audit trails; those remain unimplemented and need future scope decisions.
 
-### Sprint 5 — Testing and deployment
+#### Sprint 5 — Testing and deployment
 
 Planned scope from the local build guide: automated tests, GitHub Actions, documentation and a hosted demonstration. Completion criteria, hosting implementation and scheduling remain to be defined. The guide is available locally as `Fashion Collection (Build Guide).docx` but is not tracked in Git, so it is not a portable repository reference.
 
-### Sprint 6.4 — Inventory and runtime hardening
+#### Sprint 6.4 — Inventory and runtime hardening
 
 Completed implementation visible in the current source includes the authenticated image upload API, image validation and normalization, unique storage paths, guarded image replacement and cleanup attempts after failed association. The frontend continues to show thumbnails without an upload interface. Product create/update models validate inventory fields and quantities, and role checks gate product operations. The backend now requires the restricted runtime connection variable, and runtime dependencies are pinned. Migration 009 defines the application database role; its presence does not establish that it has been deployed. Commit `4f4e6b4` records the latest inventory and role-based access implementation.
 
-### Sprint 6.5.1A — README reconciliation
+#### Sprint 6.5.1A — README reconciliation
 
 Documentation-only reconciliation against the current application, dependency manifests and migration 009. Updates cover Sprint 6.4, image upload behavior and limits, runtime connection setup, role privileges and remaining frontend/testing/deployment gaps. Application code, database state and migration files are outside this sprint's changes.
 
-## Application Screenshots
+</details>
 
-### Dashboard Overview
+---
 
-Administrator dashboard displaying inventory metrics, seasonal collection cards, and application navigation. Seasonal collection cards use demonstration data.
+<div align="center">
 
-![ATELIER Dashboard Overview](docs/screenshots/dashboard-overview.png)
+Built by **Victor Scott** · [github.com/VicScottNYC](https://github.com/VicScottNYC)
 
-### Inventory Management
-
-Live API inventory showing product images, SKU tracking, quantities, stock indicators, search, filters, and administrator management controls.
-
-![ATELIER Inventory Management](docs/screenshots/inventory-management.png)
-
-### Product Management
-
-Administrator product editing interface displaying inventory fields and the existing product catalog.
-
-![ATELIER Product Management](docs/screenshots/product-management.png)
-
-### Role-Based Access — Viewer
-
-Read-only inventory interface demonstrating that viewer accounts can browse inventory without product creation, editing, or deletion controls.
-
-![ATELIER Viewer Role](docs/screenshots/viewer-read-only.png)
-
-## Design philosophy
-
-Fashion + Enterprise Hybrid: elegant fashion-inspired interfaces paired with practical inventory management workflows.
+</div>
